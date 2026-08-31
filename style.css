@@ -1,0 +1,601 @@
+/* =========================================================
+   SCRIPT.JS — For Aqimy — Sky Blue Romantic Theme
+   ========================================================= */
+
+// Tunggu sampai DOM selesai dimuat
+document.addEventListener('DOMContentLoaded', () => {
+
+    // ==================== ELEMEN UTAMA ====================
+    const screens = document.querySelectorAll('.screen');
+    const app = document.getElementById('app');
+    const cursorGlow = document.getElementById('cursor-glow');
+    const particlesContainer = document.getElementById('particles-container');
+    const heartsContainer = document.getElementById('hearts-container');
+    const musicToggle = document.getElementById('music-toggle');
+    const musicIcon = document.getElementById('music-icon');
+    const musicVisualizer = document.getElementById('music-visualizer');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const modalClose = document.getElementById('modal-close');
+
+    // Layar-layar spesifik
+    const loadingScreen = document.getElementById('loading-screen');
+    const pinScreen = document.getElementById('pin-screen');
+    const openingScreen = document.getElementById('opening-screen');
+    const chapter1Screen = document.getElementById('chapter1-screen');
+    const chapter2Screen = document.getElementById('chapter2-screen');
+    const chapter3Screen = document.getElementById('chapter3-screen');
+    const buildUpScreen = document.getElementById('build-up-screen');
+    const confessionScreen = document.getElementById('confession-screen');
+    const letterScreen = document.getElementById('letter-screen');
+    const questionScreen = document.getElementById('question-screen');
+    const answerYesScreen = document.getElementById('answer-yes-screen');
+    const answerWaitScreen = document.getElementById('answer-wait-screen');
+    const endingScreen = document.getElementById('ending-screen');
+    const galleryScreen = document.getElementById('gallery-screen');
+    const signatureScreen = document.getElementById('signature-screen');
+
+    // Tombol navigasi
+    const startStoryBtn = document.getElementById('start-story-btn');
+    const chapter1Next = document.getElementById('chapter1-next');
+    const chapter2Next = document.getElementById('chapter2-next');
+    const chapter3Next = document.getElementById('chapter3-next');
+    const buildUpBtn = document.getElementById('build-up-btn');
+    const confessionNext = document.getElementById('confession-next');
+    const letterNextBtn = document.getElementById('letter-next-btn');
+    const questionYesBtn = document.getElementById('question-yes-btn');
+    const questionWaitBtn = document.getElementById('question-wait-btn');
+    const yesToEnding = document.getElementById('yes-to-ending');
+    const waitToEnding = document.getElementById('wait-to-ending');
+    const endingNext = document.getElementById('ending-next');
+    const galleryNext = document.getElementById('gallery-next');
+    const signatureName = document.getElementById('signature-name');
+    const easterEgg = document.getElementById('easter-egg');
+    const easterHearts = document.getElementById('easter-hearts');
+    const currentDate = document.getElementById('current-date');
+
+    // PIN elements
+    const pinInputs = document.querySelectorAll('.pin-input');
+    const pinError = document.getElementById('pin-error');
+    const pinContainer = document.getElementById('pin-container');
+
+    // Letter elements
+    const letterContent = document.getElementById('letter-content');
+    const letterSignature = document.getElementById('letter-signature');
+
+    // ==================== STATE ====================
+    let currentScreen = 'loading-screen';
+    let musicPlaying = false;
+    let musicInitialized = false;
+    let audio = null;
+    let currentScreenTimeout = null;
+    let easterEggCount = 0;
+
+    // ==================== FUNGSI UTILITAS ====================
+    // Fungsi untuk berpindah layar
+    function showScreen(screenId) {
+        // Hapus active dari semua layar
+        screens.forEach(screen => screen.classList.remove('active'));
+        // Tambahkan active ke layar tujuan
+        const target = document.getElementById(screenId);
+        if (target) {
+            target.classList.add('active');
+            currentScreen = screenId;
+            // Scroll ke atas layar
+            target.scrollTop = 0;
+        }
+    }
+
+    // Fungsi untuk menampilkan tombol setelah delay
+    function showButtonAfter(button, delay = 1000) {
+        if (button) {
+            setTimeout(() => {
+                button.classList.remove('hidden');
+            }, delay);
+        }
+    }
+
+    // Fungsi untuk mengatur delay animasi fadeUp pada baris teks
+    function setLineAnimations(container, startDelay = 0, stagger = 300) {
+        const lines = container.querySelectorAll('.line');
+        lines.forEach((line, index) => {
+            line.style.animation = 'none';
+            line.offsetHeight; // trigger reflow
+            line.style.animation = `fadeUp 0.8s ${startDelay + index * stagger}ms forwards`;
+        });
+    }
+
+    // Fungsi untuk memulai animasi teks pada layar tertentu dan menampilkan tombol
+    function animateScreen(screenElement, nextButton, stagger = 400) {
+        const linesContainer = screenElement.querySelector('.lines-container');
+        if (linesContainer) {
+            const lines = linesContainer.querySelectorAll('.line');
+            setLineAnimations(linesContainer, 0, stagger);
+            // Hitung total durasi animasi
+            const totalDuration = lines.length * stagger + 800;
+            showButtonAfter(nextButton, totalDuration);
+        }
+    }
+
+    // ==================== MUSIK ====================
+    function initAudio() {
+        if (audio) return;
+        audio = new Audio('music/music.mp3');
+        audio.volume = 0.55;
+        audio.loop = true;
+        // Tangani error jika file tidak ditemukan
+        audio.addEventListener('error', () => {
+            console.warn('File musik tidak ditemukan. Musik dinonaktifkan.');
+            audio = null;
+            musicIcon.textContent = '🔇';
+            musicToggle.classList.remove('playing');
+        });
+        // Event ketika musik mulai dimainkan
+        audio.addEventListener('play', () => {
+            musicPlaying = true;
+            musicToggle.classList.add('playing');
+            musicIcon.textContent = '🎵';
+        });
+        audio.addEventListener('pause', () => {
+            musicPlaying = false;
+            musicToggle.classList.remove('playing');
+            musicIcon.textContent = '🎵';
+        });
+    }
+
+    function toggleMusic() {
+        if (!audio) {
+            initAudio();
+        }
+        if (!audio) return; // jika gagal init
+        if (musicPlaying) {
+            audio.pause();
+        } else {
+            audio.play().catch(err => {
+                console.warn('Autoplay diblokir. Menunggu interaksi berikutnya.');
+            });
+        }
+    }
+
+    // ==================== PARTIKEL & HATI MELAYANG ====================
+    function createParticles() {
+        const particleCount = window.innerWidth < 600 ? 15 : 25;
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const size = Math.random() * 4 + 2;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            particle.style.animationDelay = (Math.random() * 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+
+    function createFloatingHearts() {
+        const heartSymbols = ['❤', '💙', '🩵', '💙'];
+        const heartCount = window.innerWidth < 600 ? 8 : 12;
+        for (let i = 0; i < heartCount; i++) {
+            const heart = document.createElement('span');
+            heart.className = 'heart-float';
+            heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.top = Math.random() * 100 + '%';
+            heart.style.fontSize = (Math.random() * 20 + 12) + 'px';
+            heart.style.animationDuration = (Math.random() * 20 + 15) + 's';
+            heart.style.animationDelay = (Math.random() * 10) + 's';
+            heartsContainer.appendChild(heart);
+        }
+    }
+
+    // ==================== CURSOR GLOW ====================
+    document.addEventListener('mousemove', (e) => {
+        if (cursorGlow) {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        }
+    });
+
+    // ==================== MODAL FULLSCREEN ====================
+    function openModal(imageSrc, caption) {
+        modalImage.src = imageSrc;
+        modalCaption.textContent = caption || '';
+        modalOverlay.classList.add('active');
+    }
+
+    function closeModal() {
+        modalOverlay.classList.remove('active');
+    }
+
+    // Event untuk menutup modal
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            closeModal();
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    // Event untuk elemen .polaroid (klik untuk fullscreen)
+    document.querySelectorAll('.polaroid.clickable').forEach(polaroid => {
+        polaroid.addEventListener('click', () => {
+            const imgSrc = polaroid.getAttribute('data-image');
+            const caption = polaroid.getAttribute('data-caption');
+            openModal(imgSrc, caption);
+        });
+    });
+
+    // Event untuk memory card (klik untuk modal dengan isi kartu)
+    document.querySelectorAll('.memory-card.clickable').forEach(card => {
+        card.addEventListener('click', () => {
+            const title = card.querySelector('h3').textContent;
+            const desc = card.querySelector('p').textContent;
+            // Buat konten modal sederhana dengan teks
+            modalImage.style.display = 'none';
+            modalCaption.textContent = title + ': ' + desc;
+            // Tampilkan modal tanpa gambar
+            modalOverlay.classList.add('active');
+        });
+    });
+
+    // ==================== PIN SCREEN ====================
+    const PIN_CORRECT = '2008';
+    let pinValue = '';
+
+    // Fokus otomatis ke input pertama saat PIN screen aktif
+    function focusPinFirst() {
+        if (pinInputs.length > 0) {
+            pinInputs[0].focus();
+        }
+    }
+
+    // Event input PIN
+    pinInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.length === 1 && index < pinInputs.length - 1) {
+                pinInputs[index + 1].focus();
+            }
+            updatePinValue();
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                pinInputs[index - 1].focus();
+            } else if (e.key === 'Enter') {
+                checkPin();
+            }
+        });
+    });
+
+    function updatePinValue() {
+        pinValue = '';
+        pinInputs.forEach(input => {
+            pinValue += input.value;
+        });
+        if (pinValue.length === 4) {
+            checkPin();
+        }
+    }
+
+    function checkPin() {
+        if (pinValue === PIN_CORRECT) {
+            // PIN benar
+            pinError.classList.add('hidden');
+            pinContainer.classList.remove('shake');
+            // Efek gembok terbuka (sederhana: hapus layar PIN setelah animasi)
+            // Buat burst hati di sekitar pin
+            burstHearts();
+            // Mulai musik (interaksi pertama)
+            if (!musicInitialized) {
+                initAudio();
+                if (audio) {
+                    audio.play().catch(() => {});
+                }
+                musicInitialized = true;
+            }
+            setTimeout(() => {
+                showScreen('opening-screen');
+                animateScreen(openingScreen, startStoryBtn, 400);
+                setLineAnimations(openingScreen.querySelector('.lines-container'), 0, 400);
+                showButtonAfter(startStoryBtn, openingScreen.querySelectorAll('.line').length * 400 + 800);
+            }, 800);
+        } else if (pinValue.length === 4) {
+            // PIN salah
+            pinError.classList.remove('hidden');
+            pinContainer.classList.add('shake');
+            // Kosongkan input setelah delay
+            setTimeout(() => {
+                pinInputs.forEach(input => input.value = '');
+                pinValue = '';
+                pinError.classList.add('hidden');
+                pinContainer.classList.remove('shake');
+                focusPinFirst();
+            }, 500);
+        }
+    }
+
+    function burstHearts() {
+        const heartSymbols = ['❤', '💙', '🩵'];
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('span');
+            heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            heart.style.position = 'fixed';
+            heart.style.left = '50%';
+            heart.style.top = '50%';
+            heart.style.fontSize = (Math.random() * 30 + 15) + 'px';
+            heart.style.pointerEvents = 'none';
+            heart.style.zIndex = '999';
+            document.body.appendChild(heart);
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * 100 + 50;
+            heart.animate([
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance - 50}px) scale(0.5)`, opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            }).onfinish = () => heart.remove();
+        }
+    }
+
+    // ==================== LOADING SCREEN ====================
+    function showLoadingThenPin() {
+        showScreen('loading-screen');
+        setTimeout(() => {
+            showScreen('pin-screen');
+            focusPinFirst();
+        }, 2000); // 2 detik
+    }
+
+    // ==================== NAVIGASI ANTAR LAYAR ====================
+    startStoryBtn.addEventListener('click', () => {
+        showScreen('chapter1-screen');
+        animateScreen(chapter1Screen, chapter1Next, 400);
+    });
+
+    chapter1Next.addEventListener('click', () => {
+        showScreen('chapter2-screen');
+        animateScreen(chapter2Screen, chapter2Next, 400);
+    });
+
+    chapter2Next.addEventListener('click', () => {
+        showScreen('chapter3-screen');
+        animateScreen(chapter3Screen, chapter3Next, 400);
+    });
+
+    chapter3Next.addEventListener('click', () => {
+        showScreen('build-up-screen');
+        animateScreen(buildUpScreen, buildUpBtn, 400);
+    });
+
+    buildUpBtn.addEventListener('click', () => {
+        // Musik mengecil, layar gelap, transisi cinematic
+        if (audio && musicPlaying) {
+            audio.volume = 0.2;
+            setTimeout(() => {
+                audio.volume = 0.55;
+            }, 2000);
+        }
+        // Overlay gelap sementara
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(0,0,0,0.5)';
+        overlay.style.zIndex = '50';
+        overlay.style.transition = 'opacity 1s';
+        overlay.style.opacity = '0';
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+        });
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 1000);
+        }, 1000);
+        setTimeout(() => {
+            showScreen('confession-screen');
+            animateScreen(confessionScreen, confessionNext, 600);
+        }, 1200);
+    });
+
+    confessionNext.addEventListener('click', () => {
+        showScreen('letter-screen');
+        // Mulai typing animation surat
+        startLetterTyping();
+    });
+
+    letterNextBtn.addEventListener('click', () => {
+        showScreen('question-screen');
+        // Tampilkan teks pertanyaan dengan animasi
+        const qLines = questionScreen.querySelectorAll('.line');
+        setLineAnimations(questionScreen.querySelector('.lines-container'), 0, 300);
+        // Tampilkan tombol setelah beberapa saat
+        showButtonAfter(questionYesBtn, 1500);
+        showButtonAfter(questionWaitBtn, 1500);
+    });
+
+    questionYesBtn.addEventListener('click', () => {
+        showScreen('answer-yes-screen');
+        // Efek confetti dan hearts
+        createConfetti();
+        burstHearts();
+        animateScreen(answerYesScreen, yesToEnding, 400);
+    });
+
+    questionWaitBtn.addEventListener('click', () => {
+        showScreen('answer-wait-screen');
+        animateScreen(answerWaitScreen, waitToEnding, 400);
+    });
+
+    yesToEnding.addEventListener('click', () => {
+        showScreen('ending-screen');
+        animateScreen(endingScreen, endingNext, 400);
+    });
+
+    waitToEnding.addEventListener('click', () => {
+        showScreen('ending-screen');
+        animateScreen(endingScreen, endingNext, 400);
+    });
+
+    endingNext.addEventListener('click', () => {
+        showScreen('gallery-screen');
+        // Tampilkan tombol gallery
+        showButtonAfter(galleryNext, 1000);
+    });
+
+    galleryNext.addEventListener('click', () => {
+        showScreen('signature-screen');
+        setCurrentDate();
+        // Animasi signature sudah via CSS
+    });
+
+    // ==================== LETTER TYPING ====================
+    const letterText = `Aku sebenarnya nggak tahu harus mulai dari mana.
+Mungkin seharusnya aku mengatakan ini lebih dulu.
+
+Tapi ada beberapa hal yang memang membutuhkan waktu untuk bisa kita akui.
+
+Selama ini mungkin kamu nggak pernah tahu seberapa berarti beberapa hal kecil tentang kamu buat aku.
+
+Dan ketika kita mulai dekat lagi, aku sadar kalau perasaan yang selama ini aku kira sudah hilang ternyata masih ada.
+
+Aku tahu mungkin kamu nggak merasakan hal yang sama.
+
+Aku juga nggak ingin membuat kamu merasa harus memberikan jawaban tertentu.
+
+Aku cuma ingin jujur.
+
+Aku suka kamu.
+
+Dan aku ingin mengenal kamu lebih jauh, kalau kamu juga mau.
+
+Apa pun jawabanmu nanti, aku tetap menghargainya.
+
+Terima kasih karena sudah mau membaca sampai sejauh ini.`;
+
+    function startLetterTyping() {
+        letterContent.textContent = '';
+        letterSignature.classList.add('hidden');
+        letterNextBtn.classList.add('hidden');
+        let index = 0;
+        const typingSpeed = 30; // ms per karakter
+
+        function typeChar() {
+            if (index < letterText.length) {
+                letterContent.textContent += letterText.charAt(index);
+                index++;
+                // Auto scroll surat jika melebihi tinggi
+                if (letterScreen.scrollHeight > letterScreen.clientHeight) {
+                    letterScreen.scrollTop = letterScreen.scrollHeight;
+                }
+                setTimeout(typeChar, typingSpeed);
+            } else {
+                // Selesai mengetik, tampilkan tanda tangan dan tombol
+                letterSignature.classList.remove('hidden');
+                showButtonAfter(letterNextBtn, 1000);
+            }
+        }
+
+        typeChar();
+    }
+
+    // ==================== CONFETTI ====================
+    function createConfetti() {
+        const colors = ['#87CEEB', '#B0D4E8', '#D6EAF8', '#FFFFFF', '#ADD8E6'];
+        for (let i = 0; i < 50; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.top = '-10px';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.width = (Math.random() * 8 + 5) + 'px';
+            piece.style.height = (Math.random() * 8 + 5) + 'px';
+            piece.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            piece.style.animationDelay = (Math.random() * 0.5) + 's';
+            document.getElementById('yes-effects').appendChild(piece);
+            piece.addEventListener('animationend', () => piece.remove());
+        }
+    }
+
+    // ==================== TANGGAL OTOMATIS ====================
+    function setCurrentDate() {
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        currentDate.textContent = now.toLocaleDateString('id-ID', options);
+    }
+
+    // ==================== EASTER EGG SIGNATURE ====================
+    signatureName.addEventListener('click', () => {
+        easterEggCount++;
+        if (easterEggCount >= 3) {
+            easterEgg.classList.remove('hidden');
+            // Munculkan hati kecil
+            for (let i = 0; i < 5; i++) {
+                const heart = document.createElement('span');
+                heart.textContent = '💙';
+                heart.style.fontSize = '20px';
+                easterHearts.appendChild(heart);
+                setTimeout(() => heart.remove(), 2000);
+            }
+            easterEggCount = 0;
+        }
+    });
+
+    // ==================== MUSIC TOGGLE ====================
+    musicToggle.addEventListener('click', toggleMusic);
+
+    // ==================== INISIALISASI ====================
+    createParticles();
+    createFloatingHearts();
+    showLoadingThenPin();
+
+    // Tangani jika gambar gagal dimuat: ganti dengan placeholder
+    document.querySelectorAll('.polaroid-img').forEach(img => {
+        img.addEventListener('error', () => {
+            img.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="#D6EAF8"/><text x="50%" y="50%" font-family="sans-serif" font-size="18" fill="#5D6D7E" text-anchor="middle">Foto belum tersedia</text></svg>'
+            );
+        });
+    });
+
+    // Jika musik file tidak ada, pastikan tidak error
+    window.addEventListener('error', (e) => {
+        if (e.target.tagName === 'AUDIO' || e.target.tagName === 'IMG') {
+            e.preventDefault();
+        }
+    }, true);
+
+    // Keyboard accessibility: focus pada tombol ketika layar aktif
+    function setFocusOnActiveScreen() {
+        const activeScreen = document.querySelector('.screen.active');
+        if (activeScreen) {
+            const focusable = activeScreen.querySelectorAll('button, input, [tabindex]');
+            if (focusable.length > 0) {
+                focusable[0].focus({ preventScroll: true });
+            }
+        }
+    }
+
+    // Panggil ketika screen berubah (gunakan MutationObserver sederhana)
+    const observer = new MutationObserver(() => {
+        setFocusOnActiveScreen();
+    });
+    observer.observe(app, { attributes: true, childList: true, subtree: true });
+
+    // ==================== RESIZE HANDLER ====================
+    window.addEventListener('resize', () => {
+        // Optional: re-create particles if needed, but not necessary
+    });
+
+});
