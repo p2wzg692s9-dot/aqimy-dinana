@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Aqimy — A Little Story</title>
+
+    <!-- Font untuk estetika (opsional, bisa dihapus jika tidak ingin) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Hubungkan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ==================== CURSOR GLOW (untuk desktop) ==================== -->
+    <div id="cursor-glow"></div>
+
+    <!-- ==================== CONTAINER PARTIKEL & HATI MELAYANG ==================== -->
+    <div id="particles-container"></div>
+    <div id="hearts-container"></div>
+
+    <!-- ==================== MUSIC TOGGLE (pojok kanan atas) ==================== -->
+    <div id="music-toggle" title="Putar/Jeda Musik">
+        <span id="music-icon">🎵</span>
+        <div id="music-visualizer">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL UNTUK FOTO FULLSCREEN ==================== -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <span id="modal-close" class="modal-close">&times;</span>
+            <img id="modal-image" src="" alt="Foto diperbesar">
+            <p id="modal-caption" class="modal-caption"></p>
+        </div>
+    </div>
+
+    <!-- ==================== APP UTAMA ==================== -->
+    <main id="app">
+
+        <!-- ========== LAYAR 1: LOADING ========== -->
+        <section id="loading-screen" class="screen active">
+            <div class="screen-content center">
+                <p class="loading-text">Untuk seseorang yang mungkin tidak tahu…</p>
+                <p class="loading-text">tapi namanya masih sering muncul di pikiranku.</p>
+                <div class="loading-dots">
+                    <span>.</span><span>.</span><span>.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== LAYAR 2: PRIVATE / PIN ========== -->
+        <section id="pin-screen" class="screen">
+            <div class="screen-content center">
+                <p class="pin-title">Untuk Aqimy</p>
+                <p class="pin-subtitle">Ada sedikit cerita yang ingin aku tunjukkan.</p>
+                <p class="pin-small">Only for you.</p>
+
+                <div id="pin-container" class="pin-container">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+                    <input type="text" class="pin-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+                </div>
+                <p id="pin-error" class="pin-error hidden">Kayaknya bukan itu…</p>
+            </div>
+        </section>
+
+        <!-- ========== LAYAR 3: OPENING ========== -->
+        <section id="opening-screen" class="screen">
+            <div class="screen-content">
+                <div class="lines-container">
+                    <p class="line">Hai, Aqimy.</p>
+                    <p class="line">Aku sebenarnya nggak tahu harus mulai dari mana.</p>
+                    <p class="line">Mungkin karena ada beberapa hal yang lebih mudah ditulis daripada diucapkan.</p>
+                    <p class="line">Lewat website ini aku cuma ingin cerita sedikit.</p>
+                    <p class="line">Bukan untuk memaksa kamu merasakan hal yang sama.</p>
+                    <p class="line">Aku cuma ingin kamu tahu.</p>
+                    <p class="line">Jadi…</p>
+                    <p class="line">mari kita mulai dari awal.</p>
+                </div>
+                <button id="start-story-btn" class="btn primary-btn hidden">Mulai ceritanya →</button>
+            </div>
+        </section>
+
+        <!-- ========== CHAPTER 1: AWAL ========== -->
+        <section id="chapter1-screen" class="screen">
+            <div class="screen-content">
+                <p class="chapter-label">Chapter 01</p>
+                <h2 class="chapter-title">Awalnya</h2>
+                <div class="lines-container">
+                    <p class="line">Kadang seseorang masuk ke hidup kita tanpa kita sadari.</p>
+                    <p class="line">Awalnya biasa saja.</p>
+                    <p class="line">Sampai suatu hari kita sadar…</p>
+                    <p class="line">ternyata ada satu nama yang selalu berhasil kita ingat.</p>
+                    <p class="line">Dan entah sejak kapan…</p>
+                    <p class="line">nama itu menjadi penting.</p>
+                </div>
+
+                <!-- Foto polaroid -->
+                <div class="polaroid clickable" data-image="images/aqimy1.jpg" data-caption="Kenangan yang masih aku ingat.">
+                    <img src="images/aqimy1.jpg" alt="Foto Aqimy 1" class="polaroid-img">
+                    <p class="polaroid-caption">Kenangan yang masih aku ingat.</p>
+                </div>
+
+                <button id="chapter1-next" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== CHAPTER 2: WAKTU ========== -->
+        <section id="chapter2-screen" class="screen">
+            <div class="screen-content">
+                <p class="chapter-label">Chapter 02</p>
+                <h2 class="chapter-title">Setelah waktu berjalan</h2>
+                <div class="lines-container">
+                    <p class="line">Waktu terus berjalan.</p>
+                    <p class="line">Kita berubah.</p>
+                    <p class="line">Banyak hal juga berubah.</p>
+                    <p class="line">Kadang kita dekat.</p>
+                    <p class="line">Kadang kita jauh.</p>
+                    <p class="line">Tapi lucunya…</p>
+                    <p class="line">ada beberapa perasaan yang ternyata nggak benar-benar hilang.</p>
+                </div>
+
+                <!-- Memory cards interaktif -->
+                <div class="memory-cards">
+                    <div class="memory-card clickable" data-card="1">
+                        <h3>Hal kecil</h3>
+                        <p>Mungkin buat kamu biasa saja. Tapi entah kenapa aku mengingatnya.</p>
+                    </div>
+                    <div class="memory-card clickable" data-card="2">
+                        <h3>Percakapan</h3>
+                        <p>Obrolan sederhana yang mungkin nggak kamu pikirkan lagi, tapi aku masih ingat.</p>
+                    </div>
+                    <div class="memory-card clickable" data-card="3">
+                        <h3>Perasaan</h3>
+                        <p>Aku sempat berpikir semuanya sudah selesai.</p>
+                    </div>
+                    <div class="memory-card clickable" data-card="4">
+                        <h3>Nyatanya…</h3>
+                        <p>Ketika kita dekat lagi, aku sadar ternyata perasaan itu masih ada.</p>
+                    </div>
+                </div>
+
+                <button id="chapter2-next" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== CHAPTER 3: SEKARANG ========== -->
+        <section id="chapter3-screen" class="screen">
+            <div class="screen-content">
+                <p class="chapter-label">Chapter 03</p>
+                <h2 class="chapter-title">Sekarang</h2>
+                <div class="lines-container">
+                    <p class="line">Mungkin kita nggak pernah merencanakan untuk menjadi sedekat ini lagi.</p>
+                    <p class="line">Tapi ternyata kita sampai di sini.</p>
+                    <p class="line">Obrolan kecil.</p>
+                    <p class="line">Hal-hal sederhana.</p>
+                    <p class="line">Dan momen-momen yang mungkin terlihat biasa…</p>
+                    <p class="line">perlahan membuat aku sadar.</p>
+                    <p class="line">Aku senang bisa dekat sama kamu lagi.</p>
+                    <p class="line">Dan mungkin…</p>
+                    <p class="line">aku mulai menyadari kalau perasaanku belum benar-benar pergi.</p>
+                </div>
+
+                <!-- Foto polaroid kedua -->
+                <div class="polaroid clickable" data-image="images/aqimy2.jpg" data-caption="Momen yang nggak ingin aku lupakan.">
+                    <img src="images/aqimy2.jpg" alt="Foto Aqimy 2" class="polaroid-img">
+                    <p class="polaroid-caption">Momen yang nggak ingin aku lupakan.</p>
+                </div>
+
+                <button id="chapter3-next" class="btn primary-btn hidden">Teruskan →</button>
+            </div>
+        </section>
+
+        <!-- ========== BUILD UP ========== -->
+        <section id="build-up-screen" class="screen">
+            <div class="screen-content center">
+                <div class="lines-container">
+                    <p class="line">Ada satu hal yang sebenarnya ingin aku bilang.</p>
+                    <p class="line">Tapi aku takut.</p>
+                    <p class="line">Takut semuanya berubah.</p>
+                    <p class="line">Takut setelah kamu tahu…</p>
+                    <p class="line">hubungan kita jadi terasa berbeda.</p>
+                    <p class="line">Tapi aku rasa kamu berhak tahu.</p>
+                </div>
+                <button id="build-up-btn" class="btn primary-btn hidden">Aku mau jujur →</button>
+            </div>
+        </section>
+
+        <!-- ========== CONFESSION ========== -->
+        <section id="confession-screen" class="screen">
+            <div class="screen-content center">
+                <div class="lines-container">
+                    <p class="line">Aqimy…</p>
+                    <p class="line">Aku nggak tahu apa yang akan kamu pikirkan setelah membaca ini.</p>
+                    <p class="line">Aku juga nggak tahu apakah kamu pernah menyadarinya.</p>
+                    <p class="line">Aku nggak tahu apakah kamu pernah merasakan hal yang sama.</p>
+                    <p class="line">Tapi kali ini aku ingin jujur.</p>
+                    <p class="line">Di antara semua waktu yang sudah berlalu…</p>
+                    <p class="line">di antara semua hal yang pernah terjadi…</p>
+                    <p class="line">aku ternyata masih menyimpan satu perasaan.</p>
+                    <p class="line big-line">Aku suka kamu.</p>
+                    <p class="line">Dan ternyata…</p>
+                    <p class="line">aku masih suka kamu.</p>
+                </div>
+                <button id="confession-next" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== LETTER ========== -->
+        <section id="letter-screen" class="screen">
+            <div class="screen-content">
+                <div class="letter-paper">
+                    <p class="letter-header">Dear Aqimy,</p>
+                    <!-- Teks surat akan diketik oleh JavaScript di dalam div ini -->
+                    <div id="letter-content" class="letter-content"></div>
+                    <p id="letter-signature" class="letter-signature hidden">
+                        With all my heart,<br>
+                        <span class="handwritten">Salam</span>
+                    </p>
+                    <button id="letter-next-btn" class="btn primary-btn hidden">Satu pertanyaan terakhir →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== QUESTION PAGE ========== -->
+        <section id="question-screen" class="screen">
+            <div class="screen-content center">
+                <p class="line">Aqimy…</p>
+                <p class="line">Aku boleh tanya satu hal?</p>
+                <p class="line">Aku suka kamu.</p>
+                <p class="line">Aku ingin lebih dekat dan lebih mengenal kamu.</p>
+                <h2 class="question-big">Maukah kamu kasih aku kesempatan?</h2>
+                <div class="button-group">
+                    <button id="question-yes-btn" class="btn primary-btn">Aku mau</button>
+                    <button id="question-wait-btn" class="btn secondary-btn">Aku butuh waktu</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== JAWABAN: AKU MAU ========== -->
+        <section id="answer-yes-screen" class="screen">
+            <div class="screen-content center">
+                <div class="lines-container">
+                    <p class="line">Terima kasih.</p>
+                    <p class="line">Kalau begitu…</p>
+                    <p class="line">mungkin kita bisa mulai dari sini.</p>
+                    <p class="line">Maybe this is a new chapter.</p>
+                </div>
+                <!-- Efek akan ditambahkan via JS/CSS -->
+                <div id="yes-effects"></div>
+                <button id="yes-to-ending" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== JAWABAN: AKU BUTUH WAKTU ========== -->
+        <section id="answer-wait-screen" class="screen">
+            <div class="screen-content center">
+                <div class="lines-container">
+                    <p class="line">Nggak apa-apa.</p>
+                    <p class="line">Kamu nggak harus menjawab semuanya sekarang.</p>
+                    <p class="line">Aku cuma ingin kamu tahu apa yang aku rasakan.</p>
+                    <p class="line">Ambil waktumu.</p>
+                    <p class="line">Aku tetap menghargai kamu.</p>
+                </div>
+                <button id="wait-to-ending" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== ENDING ========== -->
+        <section id="ending-screen" class="screen">
+            <div class="screen-content center">
+                <div class="lines-container">
+                    <p class="line">Apa pun jawabanmu…</p>
+                    <p class="line">Aku tetap bersyukur.</p>
+                    <p class="line">Karena setelah semua waktu yang berlalu…</p>
+                    <p class="line">kita masih bisa menemukan jalan untuk dekat lagi.</p>
+                    <p class="line">Terima kasih sudah membaca semuanya.</p>
+                    <p class="line">Really.</p>
+                </div>
+                <button id="ending-next" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== GALLERY ========== -->
+        <section id="gallery-screen" class="screen">
+            <div class="screen-content">
+                <h2 class="gallery-title">Gallery</h2>
+                <p class="gallery-subtitle">Kenangan kecil.</p>
+                <div class="gallery-grid">
+                    <div class="polaroid clickable" data-image="images/aqimy1.jpg" data-caption="Kenangan kecil.">
+                        <img src="images/aqimy1.jpg" alt="Foto Aqimy 1" class="polaroid-img">
+                        <p class="polaroid-caption">Kenangan kecil.</p>
+                    </div>
+                    <div class="polaroid clickable" data-image="images/aqimy2.jpg" data-caption="Salah satu momen yang aku ingat.">
+                        <img src="images/aqimy2.jpg" alt="Foto Aqimy 2" class="polaroid-img">
+                        <p class="polaroid-caption">Salah satu momen yang aku ingat.</p>
+                    </div>
+                    <div class="polaroid clickable" data-image="images/aqimy3.jpg" data-caption="Foto yang punya cerita sendiri.">
+                        <img src="images/aqimy3.jpg" alt="Foto Aqimy 3" class="polaroid-img">
+                        <p class="polaroid-caption">Foto yang punya cerita sendiri.</p>
+                    </div>
+                </div>
+                <button id="gallery-next" class="btn primary-btn hidden">Lanjut →</button>
+            </div>
+        </section>
+
+        <!-- ========== FINAL SIGNATURE ========== -->
+        <section id="signature-screen" class="screen">
+            <div class="screen-content center">
+                <p class="from-text">From</p>
+                <h1 id="signature-name" class="signature-name handwritten">Salam</h1>
+                <p class="made-with">Made with feelings, not templates.</p>
+                <p id="current-date" class="current-date"></p>
+                <!-- Easter egg tersembunyi -->
+                <p id="easter-egg" class="easter-egg hidden">Okay… kamu menemukan rahasianya.</p>
+                <div id="easter-hearts" class="easter-hearts"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Hubungkan ke file JavaScript eksternal -->
+    <script src="script.js"></script>
+</body>
+</html>
